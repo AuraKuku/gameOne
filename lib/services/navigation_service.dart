@@ -10,7 +10,7 @@ class NavigationService {
       case ScreenDestination.newGame:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const StoryScreen(name: "new_game")),
+          MaterialPageRoute(builder: (_) => const StoryScreen(name: "intro")),
         );
         break;
       case ScreenDestination.load:
