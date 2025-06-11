@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../enums/screens.dart';
 import '../services/navigation_service.dart';
 
@@ -72,7 +71,7 @@ class MenuButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black.withOpacity(0.6),
+          backgroundColor: Colors.black.withAlpha((0.6 * 255).toInt()),
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 40),
           textStyle: const TextStyle(fontSize: 20),

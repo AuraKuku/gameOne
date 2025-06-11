@@ -1,0 +1,28 @@
+title: Start
+---
+Welcome to CatFeeder!
+
+-> Feed the cats.
+    <<jump feedCats>>
+
+-> Go to work.
+    <<jump goToWork>>
+
+===
+
+title: feedCats
+---
+The cats purr happily.
+
+-> Back
+    <<jump Start>>
+
+===
+
+title: goToWork
+---
+You arrive at your job.
+
+-> Back
+    <<jump Start>>
+===

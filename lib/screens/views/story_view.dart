@@ -6,8 +6,12 @@ import 'package:jenny/jenny.dart';
 class StoryDialogueView implements DialogueView {
   String currentLine = '';
   bool canContinue = false;
+  bool hasChoices = false;
+  List<String> currentChoices = [];
   final VoidCallback onDialogueUpdate;
+
   Completer<bool>? _lineCompleter;
+  Completer<int>? _choiceCompleter;
 
   StoryDialogueView({required this.onDialogueUpdate});
 
@@ -15,6 +19,8 @@ class StoryDialogueView implements DialogueView {
   FutureOr<bool> onLineStart(DialogueLine line) {
     currentLine = line.text;
     canContinue = true;
+    hasChoices = false;
+    currentChoices.clear();
     onDialogueUpdate();
 
     _lineCompleter = Completer<bool>();
@@ -24,7 +30,14 @@ class StoryDialogueView implements DialogueView {
 
   @override
   FutureOr<int?> onChoiceStart(DialogueChoice choice) {
-    return null;
+    hasChoices = true;
+    canContinue = false;
+    currentChoices = choice.options.map((option) => option.text).toList();
+    onDialogueUpdate();
+
+    _choiceCompleter = Completer<int>();
+
+    return _choiceCompleter!.future;
   }
 
   @override
@@ -42,16 +55,12 @@ class StoryDialogueView implements DialogueView {
 
   @override
   FutureOr<void> onDialogueStart() {
-    currentLine = '';
-    canContinue = false;
-    onDialogueUpdate();
+    _setInitialData('');
   }
 
   @override
   FutureOr<void> onDialogueFinish() {
-    currentLine = 'Dialogue finished!';
-    canContinue = false;
-    onDialogueUpdate();
+    _setInitialData('Dialogue finished!');
   }
 
   @override
@@ -83,5 +92,27 @@ class StoryDialogueView implements DialogueView {
       _lineCompleter!.complete(true);
       _lineCompleter = null;
     }
+  }
+
+  void selectChoice(int choiceIndex) {
+    if (hasChoices &&
+        _choiceCompleter != null &&
+        !_choiceCompleter!.isCompleted) {
+      hasChoices = false;
+      currentChoices.clear();
+      onDialogueUpdate();
+
+      // Complete the future with the selected choice index
+      _choiceCompleter!.complete(choiceIndex);
+      _choiceCompleter = null;
+    }
+  }
+
+  void _setInitialData(String initialLine) {
+    currentLine = initialLine;
+    canContinue = false;
+    hasChoices = false;
+    currentChoices.clear();
+    onDialogueUpdate();
   }
 }

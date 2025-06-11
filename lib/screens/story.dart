@@ -56,6 +56,12 @@ class _StoryScreenState extends State<StoryScreen> {
     }
   }
 
+  void _selectChoice(int choiceIndex) {
+    if (storyView.hasChoices) {
+      storyView.selectChoice(choiceIndex);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,16 +75,10 @@ class _StoryScreenState extends State<StoryScreen> {
               storyView.currentLine,
               style: const TextStyle(color: Colors.white, fontSize: 20),
             ),
-
+            _showChoices(),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _startDialogue,
-              child: const Text('Start Dialogue'),
-            ),
-
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: (isInitialized && storyView.canContinue)
+              onPressed: (isInitialized && storyView.canContinue && !storyView.hasChoices)
                   ? _nextLine
                   : null,
               child: const Text('Next Line'),
@@ -92,5 +92,38 @@ class _StoryScreenState extends State<StoryScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+  
+  Widget _showChoices() {
+    if (!isInitialized || !storyView.hasChoices) {
+      return SizedBox.shrink();
+    }
+    return Column( 
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+      ...[
+        SizedBox(height: 20),
+        ...storyView.currentChoices.asMap().entries.map((entry) {
+          int index = entry.key;
+          String choice = entry.value;
+          return Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => _selectChoice(index),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[100],
+                  foregroundColor: Colors.green[800],
+                  alignment: Alignment.centerLeft,
+                ),
+                child: Text('${index + 1}. $choice'),
+              ),
+            ),
+          );
+        }), //.toList(),
+      ],
+      ],
+    );
   }
 }
