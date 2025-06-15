@@ -1,9 +1,11 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:game_one/services/yarn_game_bridge.dart';
 import 'package:jenny/jenny.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import './views/story_view.dart';
+import 'package:provider/provider.dart';
+import '../state/game_state.dart';
 
 class StoryScreen extends StatefulWidget {
   final String name;
@@ -17,6 +19,7 @@ class StoryScreen extends StatefulWidget {
 
 class _StoryScreenState extends State<StoryScreen> {
   late DialogueRunner _runner;
+  late YarnGameBridge _yarnGameBridge;
   late StoryDialogueView storyView = StoryDialogueView(
     onDialogueUpdate: () {
       setState(() {});
@@ -31,11 +34,20 @@ class _StoryScreenState extends State<StoryScreen> {
   }
 
   Future<void> _initDialogue() async {
+    final gameState = context.read<GameState>();
+    final yarnProject = YarnProject();
+    _yarnGameBridge = YarnGameBridge(
+      gameState: gameState,
+      variables: yarnProject.variables,
+    );
+
     final txt = await rootBundle.loadString(
       'assets/scripts/${widget.name}.yarn',
     );
+    yarnProject.parse(txt);
+
     _runner = DialogueRunner(
-      yarnProject: YarnProject()..parse(txt),
+      yarnProject: yarnProject,
       dialogueViews: [storyView],
     );
     setState(() {
@@ -52,6 +64,7 @@ class _StoryScreenState extends State<StoryScreen> {
 
   void _nextLine() {
     if (storyView.canContinue) {
+      _yarnGameBridge.syncYarnToGameState();
       storyView.continueDialogue();
     }
   }

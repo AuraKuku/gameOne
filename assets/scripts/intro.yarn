@@ -1,6 +1,7 @@
 title: Start
 ---
 Welcome to CatFeeder!
+You have {$money} gold.
 
 -> Feed the cats.
     <<jump feedCats>>
@@ -12,8 +13,13 @@ Welcome to CatFeeder!
 
 title: feedCats
 ---
-The cats purr happily.
-
+<<if $money >= 5>>
+    <<set $money to $money - 5>>
+    The cats purr happily.
+    You have {$money} coins left.
+<<else>>
+    You don't have enough money to feed the cats! You need at least 5 coins.
+<<endif>>
 -> Back
     <<jump Start>>
 

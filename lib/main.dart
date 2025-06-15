@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'screens/main_menu.dart';
+import 'state/game_state.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -9,7 +11,10 @@ void main() {
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]).then((_) {
-    runApp(const MyApp());
+    runApp( ChangeNotifierProvider(
+      create: (_) => GameState.initial(),
+      child: const MyApp(),
+    ),);
   });
 }
 
