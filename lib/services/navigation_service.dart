@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../enums/screens.dart';
-// import '../screens/location.dart';
+import '../screens/location.dart';
 import '../screens/load_save.dart';
 import '../screens/story.dart';
 
@@ -11,6 +11,12 @@ class NavigationService {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const StoryScreen(name: "intro")),
+        );
+        break;
+      case ScreenDestination.location:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LocationScreen()),
         );
         break;
       case ScreenDestination.load:
